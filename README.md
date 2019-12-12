@@ -14,14 +14,28 @@ $ npm install awaitqueue
 * CommonJS usage:
 
 ```js
-const { AwaitQueue } = require('awaitqueue');
+const AwaitQueue = require('awaitqueue');
 ```
 
-* ES6 usage:
+* ES6 usage (see issue below):
 
 ```js
 import { AwaitQueue } from 'awaitqueue';
 ```
+
+*ISSUE:* For some reason, in ES6 this does not work:
+
+```js
+import AwaitQueue from 'awaitqueue';
+```
+
+It should work given that the main module exports a class as follows `module.exports = AwaitQueue;`. However, when using `browserify` + `babel` or `jest`, it fails with:
+
+```
+awaitqueue_1.default is not a constructor
+```
+
+Issue reported in https://github.com/versatica/awaitqueue/issues/1.
 
 
 ## API
@@ -37,7 +51,7 @@ Creates an `AwaitQueue` instance.
 
 Accepts a task as argument and enqueues it after pending tasks. Once processed, the `push()` method resolves (or rejects) with the result returned by the given task.
 
-* `@param {Function} task`: Function that must return a `Promise` or a directly a value.
+* `@param {Function} task`: Function that must return a `Promise` or a value directly.
 
 
 ### awaitQueue.close()
@@ -48,7 +62,7 @@ Closes the queue. Pending tasks will be rejected with `ClosedErrorClass` error.
 ## Usage example
 
 ```js
-const { AwaitQueue } = require('awaitqueue');
+const AwaitQueue = require('awaitqueue');
 
 const queue = new AwaitQueue();
 let taskCounter = 0;
@@ -102,15 +116,11 @@ Output:
 
 ```
 calling queue.push()
-
 // after 2 seconds:
-
 task 1 done!
 >>> ret: 1
 calling queue.push()
-
 // after 2 seconds:
-
 task 2 done!
 >>> ret: 2
 calling queue.close()
